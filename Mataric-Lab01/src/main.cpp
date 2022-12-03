@@ -8,8 +8,8 @@
    Variables and functions have logical, intuitive names
    Functions are used to improve modularity, clarity, and readability
 ***********************************
-  RobotIntro.ino
-  Carlotta Berry 11.21.16
+  Mataric-Lab01.ino
+  Kyzer Bowen & Tyce Miller 12.02.22
 
   This program will introduce using the stepper motor library to create motion algorithms for the robot.
   The motions will be go to angle, go to goal, move in a circle, square, figure eight and teleoperation (stop, forward, spin, reverse, turn)
@@ -101,6 +101,12 @@ const int rtEncoder = 19;        //right encoder pin (Mega Interrupt pins 2,3 18
 volatile long encoder[2] = {0, 0};  //interrupt variable to hold number of encoder counts (left, right)
 int lastSpeed[2] = {0, 0};          //variable to hold encoder speed (left, right)
 int accumTicks[2] = {0, 0};         //variable to hold accumulated ticks since last reset
+
+//define robot measurements
+const int wheelDiam;    // Wheel diameter on robot
+const int wheelCirc;    // Wheel circumfrence on robot
+
+
 
 //IMU object
 Adafruit_MPU6050 mpu;
@@ -514,6 +520,17 @@ void turn(int direction) {
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
 */
 void forward(int distance) {
+
+  // Calculates the distance in inches to wheel steps (Could be 200 or 800 steps per rotation)
+  int wheelStepsForDistance = (200 / wheelCirc) * distance; // (steps per rotation / distance per rotation) * desired distance
+
+  // Moves both motors to desired distance
+  long positions[2]; // Array of desired stepper positions
+  positions[0] = wheelStepsForDistance;//right motor absolute position
+  positions[1] = wheelStepsForDistance;//left motor absolute position
+  steppers.moveTo(positions);
+  steppers.runSpeedToPosition(); // Blocks until all are in position
+
 }
 /*
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
@@ -524,6 +541,8 @@ void reverse(int distance) {
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
 */
 void stop() {
+  
+
 }
 
 
