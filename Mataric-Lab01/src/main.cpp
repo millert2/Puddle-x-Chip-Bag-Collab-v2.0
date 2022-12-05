@@ -103,9 +103,9 @@ int lastSpeed[2] = {0, 0};          //variable to hold encoder speed (left, righ
 int accumTicks[2] = {0, 0};         //variable to hold accumulated ticks since last reset
 
 //define robot measurements
-const int wheelDiam;    // Wheel diameter on robot
-const int wheelCirc;    // Wheel circumfrence on robot
-
+const int wheelDiam = 8.6;    // Wheel diameter on robot (cm)
+const int wheelCirc = wheelDiam*PI;    // Wheel circumfrence on robot (cm)
+const int robotDiam = 21;   // Robot Diameter from center to center of the wheels (cm)
 
 
 //IMU object
@@ -497,7 +497,7 @@ void move5() {
 }
 
 
-// Ask Dr. Berry about if we can edit parameters for Turn functions (adding int diam)
+
 
 /*
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
@@ -521,7 +521,7 @@ void turn(int direction) {
 */
 void forward(int distance) {
 
-  // Calculates the distance in inches to wheel steps (Could be 200 or 800 steps per rotation)
+  // Calculates the distance in inches to wheel steps  (200  steps per rotation)
   int wheelStepsForDistance = (200 / wheelCirc) * distance; // (steps per rotation / distance per rotation) * desired distance
 
   // Moves both motors to desired distance
@@ -536,6 +536,15 @@ void forward(int distance) {
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
 */
 void reverse(int distance) {
+    // Calculates the distance in inches to wheel steps  (200  steps per rotation)
+  int wheelStepsForDistance = (200 / wheelCirc) * distance; // (steps per rotation / distance per rotation) * desired distance
+
+  // Moves both motors to desired distance
+  long positions[2]; // Array of desired stepper positions
+  positions[0] = -wheelStepsForDistance;//right motor absolute position
+  positions[1] = -wheelStepsForDistance;//left motor absolute position
+  steppers.moveTo(positions);
+  steppers.runSpeedToPosition(); // Blocks until all are in position
 }
 /*
   INSERT DESCRIPTION HERE, what are the inputs, what does it do, functions used
@@ -592,8 +601,12 @@ void setup()
 
 void loop()
 {
+
+  forward(40);
+  delay(3000);
+  reverse(40);
   //uncomment each function one at a time to see what the code does
-  move1();//call move back and forth function
+  //move1();//call move back and forth function
   //move2();//call move back and forth function with AccelStepper library functions
   //move3();//call move back and forth function with MultiStepper library functions
   //move4(); //move to target position with 2 different speeds
